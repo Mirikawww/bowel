@@ -307,7 +307,7 @@ func (a *App) probeTunDNS() {
 // is a note, not an issue: a firewall that lets the device in is fine,
 // and that can't be read without root.
 func tunStackDetail(stack string, firewall bool) string {
-	if !firewall || stack == "gvisor" {
+	if !firewall || stack == "gvisor" || stack == "mips" {
 		return ""
 	}
 	return fmt.Sprintf(i18n.T("ufw 或 firewalld 开着：协议栈是 %s 时，防火墙可能拦下 TUN 上不走代理端口的 TCP，表现为超时。改用 gVisor 协议栈可以避开（设置 → TUN → 协议栈，或 bowel settings set tunStack gvisor）；已在防火墙里放行 TUN 网卡的可以忽略",

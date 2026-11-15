@@ -590,6 +590,9 @@ func TestTunStackFirewallNote(t *testing.T) {
 	if d := tunStackDetail("gvisor", true); d != "" {
 		t.Errorf("gvisor behind a firewall: %q", d)
 	}
+	if d := tunStackDetail("mips", true); d != "" {
+		t.Errorf("mips behind a firewall: %q", d)
+	}
 	saved := osTun
 	defer func() { osTun = saved }()
 	osTun.needsRule = func(string) bool { return false }

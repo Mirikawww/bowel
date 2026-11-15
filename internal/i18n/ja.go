@@ -296,6 +296,7 @@ var jaTable = map[string]string{
 	"mixed（TCP 用 system，UDP 用 gVisor）": "mixed（TCP は system、UDP は gVisor）",
 	"system（系统协议栈）":                    "system（システムのスタック）",
 	"gVisor（用户态协议栈）":                   "gVisor（ユーザー空間のスタック）",
+	"MIPS（用户态协议栈）":                     "MIPS（ユーザー空間のスタック）",
 	"劫持 ":                              "ハイジャック：",
 	"不劫持":                              "ハイジャックしない",
 	"劫持 53 端口":                         "ポート 53 をハイジャック",

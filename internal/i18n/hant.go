@@ -297,6 +297,7 @@ var hantTable = map[string]string{
 	"mixed（TCP 用 system，UDP 用 gVisor）": "mixed（TCP 用 system，UDP 用 gVisor）",
 	"system（系统协议栈）":                    "system（系統協定堆疊）",
 	"gVisor（用户态协议栈）":                   "gVisor（使用者空間協定堆疊）",
+	"MIPS（用户态协议栈）":                     "MIPS（使用者空間協定堆疊）",
 	"劫持 ":                              "劫持 ",
 	"不劫持":                              "不劫持",
 	"劫持 53 端口":                         "劫持 53 連接埠",

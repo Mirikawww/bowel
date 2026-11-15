@@ -697,7 +697,7 @@ func (x *bridge) writeConfig() error {
 		return err
 	}
 	tun := cfg["tun"].(map[string]any)
-	tun["stack"], tun["mtu"] = "gvisor", 1500
+	tun["stack"], tun["mtu"] = phoneTunStack(s.TunStack), 1500
 	tun["auto-route"], tun["auto-detect-interface"], tun["strict-route"] = false, false, false
 	tun["inet4-address"] = []string{"198.18.0.1/30"}
 	tun["dns-hijack"] = []string{"any:53"}

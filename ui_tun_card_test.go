@@ -32,6 +32,7 @@ func TestTunCardStack(t *testing.T) {
 		"mixed":  "mixed（TCP 用 system，UDP 用 gVisor）",
 		"system": "system（系统协议栈）",
 		"gvisor": "gVisor（用户态协议栈）",
+		"mips":   "MIPS（用户态协议栈）",
 	}
 	for _, stack := range core.TunStacks {
 		tt := tunCard(t, func(s *settings.Settings) { s.TunStack = stack })
@@ -44,6 +45,32 @@ func TestTunCardStack(t *testing.T) {
 			}
 		}
 		shot(t, tt, "tun-card-"+stack)
+	}
+}
+
+func TestTunSettingsMips(t *testing.T) {
+	for _, dark := range []bool{false, true} {
+		u := fixtureUI()
+		u.snap.Settings = settings.Defaults.Clone()
+		u.set.section = "tun"
+		tt := ui.NewTesterWith(u.settingsView, 760, 560, ui.TesterOptions{Dark: dark})
+		tt.Advance(time.Second)
+		if err := tt.Click("mips"); err != nil {
+			t.Fatal(err)
+		}
+		tt.Frame()
+		tt.Frame()
+		if got := u.shownSettings().TunStack; got != "mips" {
+			t.Fatalf("dark=%v: stack after selecting MIPS = %q", dark, got)
+		}
+		if err := tt.Click("gvisor"); err != nil {
+			t.Fatal(err)
+		}
+		tt.Frame()
+		tt.Frame()
+		if got := u.shownSettings().TunStack; got != "gvisor" {
+			t.Fatalf("dark=%v: stack after switching back = %q", dark, got)
+		}
 	}
 }
 

@@ -143,6 +143,10 @@ class _OptionsPageState extends State<OptionsPage> {
       children: [
         section(l, tr('基本', 'Basic'), top: 4, [for (final f in _basic) _field(l, f)]),
         section(l, tr('自动选择', 'Auto select'), [for (final f in _auto) _field(l, f)]),
+        if (!Platform.isIOS)
+          section(l, 'TUN', [
+            _field(l, _F.pick('tunStack', tr('协议栈', 'Stack'), [('gvisor', 'gVisor'), ('mips', 'MIPS')])),
+          ]),
         section(l, 'DNS', [
           for (final f in _dns) _field(l, f),
           navRow(l, tr('清除 DNS 缓存', 'Flush DNS cache'), '', sub: tr('VPN 开启时可用', 'Available while VPN is on'), onTap: () async {

@@ -47,6 +47,9 @@ func openSettings(dir string) (*settings.Store, error) {
 // settingsData is the settings as saved, plus what the page can do here.
 type settingsData struct {
 	settings.Settings
+	// Older phone settings inherit mixed, but have always used gVisor.
+	// Report the effective mobile stack, including after a reset/import.
+	TunStack string `json:"tunStack"`
 	// IPv6 is the page's switch: nothing here reads the network, so Auto
 	// shows as on, which is what it comes to.
 	IPv6      bool `json:"ipv6"`
@@ -57,7 +60,16 @@ type settingsData struct {
 
 func (x *bridge) settingsData() settingsData {
 	s := x.set.Get()
-	return settingsData{Settings: s, IPv6: s.Options.IPv6 != core.IPv6Off, GeoUpdate: canUpdateGeo, CanTailnet: canTailnet}
+	return settingsData{Settings: s, TunStack: phoneTunStack(s.TunStack), IPv6: s.Options.IPv6 != core.IPv6Off, GeoUpdate: canUpdateGeo, CanTailnet: canTailnet}
+}
+
+// Android's VPN supports both userspace stacks. Preserve gVisor for existing
+// settings and the iOS extension; desktop system/mixed settings aren't mobile choices.
+func phoneTunStack(stack string) string {
+	if runtime.GOOS != "ios" && stack == "mips" {
+		return "mips"
+	}
+	return "gvisor"
 }
 
 // setLanguage changes the language of what the bridge writes. It touches

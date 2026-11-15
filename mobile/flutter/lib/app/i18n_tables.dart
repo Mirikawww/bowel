@@ -2,6 +2,7 @@
 // the same string these are its translations (internal/i18n).
 
 const jaTable = <String, String>{
+  '协议栈': 'スタック',
   ' · 选择出口': ' · 出口を選択',
   ' 等': ' など',
   '30 天': '30 日',
@@ -479,6 +480,7 @@ const jaTable = <String, String>{
 };
 
 const hantTable = <String, String>{
+  '协议栈': '協定堆疊',
   ' · 选择出口': ' · 選擇出口',
   ' 等': ' 等',
   '30 天': '30 天',
