@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/widgets.dart';
 
@@ -228,8 +229,30 @@ class TopTabs extends StatelessWidget {
   }
 }
 
-/// A row's hairline, along its bottom edge.
-Widget hairBottom(Look l, Widget child) => DecoratedBox(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: l.hair2))), child: child);
+/// Settings lists draw separators between items, without a trailing rule.
+/// Each nested list establishes its own last item, even inside a final section.
+List<Widget> rowDividers(List<Widget> children) {
+  if (defaultTargetPlatform != TargetPlatform.android) return children;
+  final last = children.lastIndexWhere((child) => child is! SizedBox);
+  return [
+    for (final (i, child) in children.indexed)
+      _RowDivider(show: i != last, child: child),
+  ];
+}
+
+class _RowDivider extends InheritedWidget {
+  const _RowDivider({required this.show, required super.child});
+  final bool show;
+
+  @override
+  bool updateShouldNotify(_RowDivider oldWidget) => show != oldWidget.show;
+}
+
+/// A row's hairline, along its bottom edge. Other pages keep their own rules.
+Widget hairBottom(Look l, Widget child) => Builder(builder: (context) {
+      final show = context.dependOnInheritedWidgetOfExactType<_RowDivider>()?.show ?? true;
+      return DecoratedBox(decoration: BoxDecoration(border: show ? Border(bottom: BorderSide(color: l.hair2)) : null), child: child);
+    });
 
 /// A row's hairline, along its top edge.
 Widget hairTop(Look l, Widget child) => DecoratedBox(decoration: BoxDecoration(border: Border(top: BorderSide(color: l.hair2))), child: child);

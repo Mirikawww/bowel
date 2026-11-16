@@ -44,7 +44,7 @@ Widget toggleRow(Look l, String a, bool on, VoidCallback onTap, {String? sub}) =
 
 Widget section(Look l, String title, List<Widget> kids, {double top = 18}) => Padding(
       padding: EdgeInsets.fromLTRB(16, top, 16, 4),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [eyebrow(l, title), ...kids]),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [eyebrow(l, title), ...rowDividers(kids)]),
     );
 
 /// A page pushed inside 设置: title on top, back and actions by the thumb.
@@ -75,7 +75,7 @@ class SubPage extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(child: dockChild ?? Row(mainAxisAlignment: MainAxisAlignment.end, children: actions)),
         ]),
-        list: (bottom) => ListView(scrollCacheExtent: eager ? const ScrollCacheExtent.pixels(100000) : null, padding: EdgeInsets.only(bottom: bottom), keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag, children: children),
+        list: (bottom) => ListView(scrollCacheExtent: eager ? const ScrollCacheExtent.pixels(100000) : null, padding: EdgeInsets.only(bottom: bottom), keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag, children: rowDividers(children)),
       ),
     );
   }

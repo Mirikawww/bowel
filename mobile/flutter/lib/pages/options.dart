@@ -7,6 +7,7 @@ import '../app/shell.dart';
 import '../app/state.dart';
 import '../ui/atoms.dart';
 import '../ui/skin.dart';
+import 'frame.dart';
 import 'rows.dart';
 import 'sheet.dart';
 
@@ -254,14 +255,14 @@ class _AppsPageState extends State<AppsPage> {
             Padding(padding: const EdgeInsets.fromLTRB(16, 4, 16, 6), child: Text(tr('关掉的 App 不走 bowel，直接联网。下次开启 VPN 时生效。', 'Apps turned off skip bowel and connect directly. Applies the next time VPN turns on.'), style: l.text(13, color: l.mute, lh: 18))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(children: [
+              child: Column(children: rowDividers([
                 for (final a in rows)
                   toggleRow(l, a.name, !out.contains(a.id), () {
                     final next = {...out};
                     next.contains(a.id) ? next.remove(a.id) : next.add(a.id);
                     app.setExcluded(next);
                   }, sub: a.id),
-              ]),
+              ])),
             ),
           ],
         );

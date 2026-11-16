@@ -1,9 +1,7 @@
-import 'dart:io' show Platform;
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../app/i18n.dart';
-import '../app/shell.dart';
 import '../app/state.dart';
 import '../ui/atoms.dart';
 import '../ui/skin.dart';
@@ -55,15 +53,58 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-class _SettingsHome extends StatefulWidget {
+enum _SettingsGroup { appearance, routing }
+
+String _groupTitle(_SettingsGroup group) => switch (group) {
+      _SettingsGroup.appearance => tr('外观', 'Appearance'),
+      _SettingsGroup.routing => tr('路由与规则', 'Routes and rules'),
+    };
+
+class _SettingsHome extends StatelessWidget {
   const _SettingsHome({required this.app});
   final AppState app;
 
   @override
-  State<_SettingsHome> createState() => _SettingsHomeState();
+  Widget build(BuildContext context) {
+    if (defaultTargetPlatform != TargetPlatform.android) return _SettingsContent(app: app);
+    return ListenableBuilder(
+      listenable: app,
+      builder: (context, _) {
+        final l = Skin.of(context);
+        Widget entry(_SettingsGroup group) => navRow(l, _groupTitle(group), '',
+            onTap: () => pushPage(context, _SettingsContent(app: app, group: group)));
+        return ColoredBox(
+          color: l.paper,
+          child: ListPage(
+            title: tr('设置', 'Settings'),
+            marginTop: 0,
+            list: (bottom) => ListView(padding: EdgeInsets.fromLTRB(16, 8, 16, bottom), children: rowDividers([
+              navRow(l, tr('语言', 'Language'), languageNames[language]!, onTap: () => pickSheet<String>(app, tr('语言', 'Language'), [for (final c in languages) PickOption(c, languageNames[c]!)], app.setLanguage, value: language)),
+              entry(_SettingsGroup.appearance),
+              navRow(l, tr('内核选项', 'Core options'), '', onTap: () => pushPage(context, OptionsPage(app: app))),
+              entry(_SettingsGroup.routing),
+              navRow(l, tr('分应用代理', 'Per-app proxy'), '', onTap: () => pushPage(context, AppsPage(app: app))),
+              navRow(l, 'Tailscale', '', onTap: () => pushPage(context, TailnetPage(app: app))),
+              navRow(l, tr('关于与开源许可', 'About and licenses'), '', onTap: () => pushPage(context, AboutPage(app: app))),
+            ])),
+          ),
+        );
+      },
+    );
+  }
 }
 
-class _SettingsHomeState extends State<_SettingsHome> {
+/// The same controls serve Android's category pages and iOS's inline page.
+class _SettingsContent extends StatefulWidget {
+  const _SettingsContent({required this.app, this.group});
+  final AppState app;
+  final _SettingsGroup? group;
+
+  @override
+  State<_SettingsContent> createState() => _SettingsContentState();
+}
+
+class _SettingsContentState extends State<_SettingsContent> {
   Widget _skins(BuildContext context, Look l) {
     final dark = widget.app.wantsDark(MediaQuery.platformBrightnessOf(context));
     final ids = skinDefs.keys.toList();
@@ -167,40 +208,43 @@ class _SettingsHomeState extends State<_SettingsHome> {
       listenable: app,
       builder: (context, _) {
         final l = Skin.of(context);
-        final android = Platform.isAndroid;
-        final out = app.vpnExcluded.split(',').where((s) => s.isNotEmpty).length;
+        final group = widget.group;
+        Widget block(_SettingsGroup id, List<Widget> rows, {double top = 18}) => group == null
+            ? section(l, _groupTitle(id), top: top, rows)
+            : Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 4), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: rowDividers(rows)));
+        final children = <Widget>[
+          if (group == null)
+            section(l, tr('接管', 'Connection'), top: 8, [
+              toggleRow(l, 'VPN', app.on, app.toggleTake, sub: app.on ? tr('生效中', 'Active') : tr('已关闭', 'Off')),
+              toggleRow(l, tr('断线后自动接管', 'Reconnect automatically'), app.vpnOnDemand, () => app.setOnDemand(!app.vpnOnDemand), sub: tr('网络恢复或切换后自动重连，下次开启 VPN 时生效', 'Reconnects when the network returns or changes. Applies the next time VPN turns on.')),
+            ]),
+          if (group == null || group == _SettingsGroup.appearance)
+            block(_SettingsGroup.appearance, [
+              _skins(context, l),
+              _appearance(l),
+              navRow(l, tr('边框', 'Borders'), app.twisted ? tr('弯曲', 'Twisted') : tr('笔直', 'Straight'), onTap: () => pickSheet<bool>(app, tr('边框', 'Borders'), [PickOption(false, tr('笔直', 'Straight')), PickOption(true, tr('弯曲', 'Twisted'))], app.setTwisted, value: app.twisted)),
+              _accents(l),
+            ]),
+          if (group == null || group == _SettingsGroup.routing)
+            block(_SettingsGroup.routing, [
+              navRow(l, tr('路由组', 'Route groups'), tr('{0} 个', '{0}', [app.ruleTargets.length]), onTap: () => pushPage(context, RoutesPage(app: app))),
+              navRow(l, tr('我的规则', 'My rules'), tr('{0} 条', '{0}', [app.userRules]), sub: tr('让某个域名、关键词或 IP 段走指定路由', 'Send a domain, keyword or IP range through a chosen route'), onTap: () => pushPage(context, MyRulesPage(app: app))),
+            ]),
+          if (group == null)
+            section(l, tr('通用', 'General'), [
+              navRow(l, tr('语言', 'Language'), languageNames[language]!, onTap: () => pickSheet<String>(app, tr('语言', 'Language'), [for (final c in languages) PickOption(c, languageNames[c]!)], app.setLanguage, value: language)),
+              navRow(l, tr('内核选项', 'Core options'), app.coreText, onTap: () => pushPage(context, OptionsPage(app: app))),
+              navRow(l, tr('关于与开源许可', 'About and licenses'), '0.1.0', onTap: () => pushPage(context, AboutPage(app: app))),
+            ]),
+          const SizedBox(height: 18),
+        ];
+        if (group != null) return SubPage(title: _groupTitle(group), children: children);
         return ColoredBox(
           color: l.paper,
           child: ListPage(
             title: tr('设置', 'Settings'),
             marginTop: 0,
-            list: (bottom) => ListView(padding: EdgeInsets.only(bottom: bottom), children: [
-              section(l, tr('接管', 'Connection'), top: 8, [
-                toggleRow(l, 'VPN', app.on, app.toggleTake, sub: app.on ? tr('生效中', 'Active') : tr('已关闭', 'Off')),
-                if (android) ...[
-                  navRow(l, tr('分应用代理', 'Per-app proxy'), out == 0 ? tr('全部 App', 'All apps') : tr('{0} 个不走', '{0} excluded', [out]), sub: tr('选择哪些 App 不走 bowel', 'Choose which apps skip bowel'), onTap: () => pushPage(context, AppsPage(app: app))),
-                  navRow(l, tr('始终开启 VPN', 'Always-on VPN'), tr('系统设置', 'System Settings'), sub: tr('系统级，开机即接管', 'System-wide, on from startup'), onTap: Shell.instance.openVPNSettings),
-                  navRow(l, 'Tailscale', '', sub: tr('不用官方 App 访问 tailnet', 'Reach your tailnet without the Tailscale app'), onTap: () => pushPage(context, TailnetPage(app: app))),
-                ] else
-                  toggleRow(l, tr('断线后自动接管', 'Reconnect automatically'), app.vpnOnDemand, () => app.setOnDemand(!app.vpnOnDemand), sub: tr('网络恢复或切换后自动重连，下次开启 VPN 时生效', 'Reconnects when the network returns or changes. Applies the next time VPN turns on.')),
-              ]),
-              section(l, tr('外观', 'Appearance'), [
-                _skins(context, l),
-                _appearance(l),
-                navRow(l, tr('边框', 'Borders'), app.twisted ? tr('弯曲', 'Twisted') : tr('笔直', 'Straight'), onTap: () => pickSheet<bool>(app, tr('边框', 'Borders'), [PickOption(false, tr('笔直', 'Straight')), PickOption(true, tr('弯曲', 'Twisted'))], app.setTwisted, value: app.twisted)),
-                _accents(l),
-              ]),
-              section(l, tr('路由与规则', 'Routes and rules'), [
-                navRow(l, tr('路由组', 'Route groups'), tr('{0} 个', '{0}', [app.ruleTargets.length]), onTap: () => pushPage(context, RoutesPage(app: app))),
-                navRow(l, tr('我的规则', 'My rules'), tr('{0} 条', '{0}', [app.userRules]), sub: tr('让某个域名、关键词或 IP 段走指定路由', 'Send a domain, keyword or IP range through a chosen route'), onTap: () => pushPage(context, MyRulesPage(app: app))),
-              ]),
-              section(l, tr('通用', 'General'), [
-                navRow(l, tr('语言', 'Language'), languageNames[language]!, onTap: () => pickSheet<String>(app, tr('语言', 'Language'), [for (final c in languages) PickOption(c, languageNames[c]!)], app.setLanguage, value: language)),
-                navRow(l, tr('内核选项', 'Core options'), app.coreText, onTap: () => pushPage(context, OptionsPage(app: app))),
-                navRow(l, tr('关于与开源许可', 'About and licenses'), '0.1.0', onTap: () => pushPage(context, AboutPage(app: app))),
-              ]),
-              const SizedBox(height: 18),
-            ]),
+            list: (bottom) => ListView(padding: EdgeInsets.only(bottom: bottom), children: children),
           ),
         );
       },

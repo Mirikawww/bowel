@@ -1311,7 +1311,7 @@ class _MyRulesPageState extends State<MyRulesPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: rows.isEmpty
                   ? Padding(padding: const EdgeInsets.only(top: 24), child: Text(tr('还没有规则。在活动页点开一条连接，可以让它走指定路由。', 'No rules yet. Open a connection in Activity to send it through a chosen route.'), style: l.text(14, color: l.mute, lh: 20)))
-                  : Column(children: rows),
+                  : Column(children: rowDividers(rows)),
             ),
           ],
         );
