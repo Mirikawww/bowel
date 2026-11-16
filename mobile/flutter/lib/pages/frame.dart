@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 
 import '../app/i18n.dart';
 import '../app/state.dart';
-import '../ui/atoms.dart';
 import '../ui/skin.dart';
 
 /// How much room the window has, which decides the board and the navigation.
@@ -178,7 +177,6 @@ class AndroidBar extends StatelessWidget {
                     decoration: BoxDecoration(color: app.tab == i ? l.accent.withValues(alpha: .34) : const Color(0x00000000), borderRadius: l.br(16)),
                   ),
                   Icon(it.$1, size: 24, color: app.tab == i ? l.ink : l.ink2),
-                  if (i == 2) Positioned(top: 1, right: 16, child: Dot(l.warn)),
                 ]),
                 const SizedBox(height: 3),
                 Text(it.$2, maxLines: 1, style: l.text(12, weight: app.tab == i ? 700 : 500, color: app.tab == i ? l.ink : l.ink2, lh: 16).copyWith(shadows: const [])),
@@ -217,7 +215,6 @@ class TopTabs extends StatelessWidget {
                     decoration: BoxDecoration(color: app.tab == i ? l.accent : const Color(0x00000000), borderRadius: l.br(7)),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Text(it.$2, maxLines: 1, style: l.text(13, weight: 600, color: app.tab == i ? l.onAccent : l.ink2, lh: 18).copyWith(shadows: const [])),
-                      if (i == 2) ...[const SizedBox(width: 6), Dot(l.warn)],
                     ]),
                   ),
                 ),
