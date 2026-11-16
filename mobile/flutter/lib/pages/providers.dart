@@ -77,7 +77,7 @@ class _ProvidersPageState extends State<ProvidersPage> {
           child: Container(width: 46, height: 44, alignment: Alignment.center, decoration: BoxDecoration(color: l.paper2, borderRadius: l.br(11)), child: Ic(icon, color: l.ink2)),
         );
     return Row(children: [
-      Expanded(child: SearchField(key: const ValueKey('add'), controller: app.providerField, hint: tr('粘贴订阅链接或节点链接', 'Paste a subscription or node link'), label: tr('添加 Provider', 'Add Provider'), icon: false, onSubmitted: app.addProvider)),
+      Expanded(child: SearchField(key: const ValueKey('add'), controller: app.providerField, hint: tr('粘贴订阅链接或节点链接', 'Paste a subscription or node link'), label: tr('添加提供商', 'Add Provider'), icon: false, onSubmitted: app.addProvider)),
       const SizedBox(width: 8),
       square('scan', tr('扫描二维码', 'Scan QR code'), app.scanLink),
       const SizedBox(width: 8),
@@ -106,7 +106,7 @@ class _ProvidersPageState extends State<ProvidersPage> {
     final app = widget.app;
     final l = Skin.of(context);
     return ListPage(
-      title: 'Provider',
+      title: tr('提供商', 'Provider'),
       dock: _dock(l, app),
       dockH: 66,
       list: (bottom) => CustomScrollView(
@@ -145,7 +145,7 @@ void _share(AppState app, ProviderInfo p) async {
     return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Text(tr('分享 {0}', 'Share {0}', [p.name]), style: l.text(15, weight: 700, lh: 21)),
       const SizedBox(height: 4),
-      Text(tr('这个链接等同于这个 Provider 的账号，只发给信任的人。', 'This link works like the account for this Provider. Only send it to people you trust.'), style: l.text(12.5, color: l.mute, lh: 17)),
+      Text(tr('这个链接等同于这个提供商的账号，只发给信任的人。', 'This link works like the account for this Provider. Only send it to people you trust.'), style: l.text(12.5, color: l.mute, lh: 17)),
       const SizedBox(height: 12),
       if (rows.isNotEmpty)
         Center(

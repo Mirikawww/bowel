@@ -330,7 +330,7 @@ class AppState extends ChangeNotifier {
 
   void say(String text, {int ms = 1600}) => _toast(text, ms: ms);
 
-  void _syncTabTitles() => Shell.instance.setTabTitles([tr('代理', 'Proxy'),tr('活动', 'Activity'), 'Provider', tr('设置', 'Settings')]);
+  void _syncTabTitles() => Shell.instance.setTabTitles([tr('代理', 'Proxy'),tr('活动', 'Activity'), tr('提供商', 'Provider'), tr('设置', 'Settings')]);
 
   /// Switches the interface. Every element rebuilds, because a word on
   /// screen can come from anywhere, and what the core wrote is asked for again.

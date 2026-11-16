@@ -441,7 +441,7 @@ class _GroupPageState extends State<GroupPage> {
       }
       if (allProviders.length > 1 || providers.isNotEmpty) {
         kids.addAll([
-          Padding(padding: const EdgeInsets.only(top: 4), child: Text('Provider', style: l.text(13, color: l.mute, lh: 18))),
+          Padding(padding: const EdgeInsets.only(top: 4), child: Text(tr('提供商', 'Provider'), style: l.text(13, color: l.mute, lh: 18))),
           _chips([
             Chip(text: tr('全部', 'All'), on: providers.isEmpty, onTap: () => _scope(g, providers: const [])),
             for (final (pid, name) in providerChips)

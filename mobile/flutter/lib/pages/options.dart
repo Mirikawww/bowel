@@ -38,7 +38,7 @@ List<_F> get _basic => [
 List<_F> get _auto => [
   _F.num('urlTestInterval', tr('测速间隔', 'Test interval'), tr('秒', 's'), sub: tr('自动选择节点多久测一次', 'How often automatic selection tests nodes')),
   _F.num('urlTestTolerance', tr('切换容差', 'Switch tolerance'), 'ms', sub: tr('另一个节点要快这么多才切换', 'Another node must be this much faster to switch')),
-  _F.num('healthInterval', tr('Provider 检查间隔', 'Provider check interval'), tr('秒', 's')),
+  _F.num('healthInterval', tr('提供商检查间隔', 'Provider check interval'), tr('秒', 's')),
 ];
 
 List<_F> get _dns => [
