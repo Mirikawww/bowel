@@ -191,7 +191,7 @@ class AboutPage extends StatelessWidget {
           const SizedBox(width: 14),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('bowel', style: l.text(23, weight: 700, display: true, lh: 29)),
-            Text('0.1.0', style: l.text(13.5, color: l.mute, lh: 19)),
+            Text('0.4.5', style: l.text(13.5, color: l.mute, lh: 19)),
           ]),
         ]),
       ),

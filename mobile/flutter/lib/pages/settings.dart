@@ -234,7 +234,7 @@ class _SettingsContentState extends State<_SettingsContent> {
             section(l, tr('通用', 'General'), [
               navRow(l, tr('语言', 'Language'), languageNames[language]!, onTap: () => pickSheet<String>(app, tr('语言', 'Language'), [for (final c in languages) PickOption(c, languageNames[c]!)], app.setLanguage, value: language)),
               navRow(l, tr('内核选项', 'Core options'), app.coreText, onTap: () => pushPage(context, OptionsPage(app: app))),
-              navRow(l, tr('关于与开源许可', 'About and licenses'), '0.1.0', onTap: () => pushPage(context, AboutPage(app: app))),
+              navRow(l, tr('关于与开源许可', 'About and licenses'), '0.4.5', onTap: () => pushPage(context, AboutPage(app: app))),
             ]),
           const SizedBox(height: 18),
         ];

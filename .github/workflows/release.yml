@@ -1,6 +1,7 @@
 # Pushing a tag such as v0.2.0 builds every platform and, once all of them
 # have succeeded, publishes one GitHub release. The tag must match the version
-# in mygo.json; the phone apps take their version from it too.
+# in mygo.json. Android uses the version and build number in pubspec.yaml;
+# iOS takes its version from mygo.json.
 #
 # Running this workflow by hand builds everything and publishes nothing: the
 # files stay on the run as artifacts, with an ad hoc signature on macOS and the
@@ -279,7 +280,8 @@ jobs:
       - name: Build the app
         working-directory: mobile/flutter
         run: |
-          flutter build apk --release --build-name="$VERSION" --build-number="$GITHUB_RUN_NUMBER"
+          # Android versionName/versionCode are maintained in pubspec.yaml.
+          flutter build apk --release
           mv build/app/outputs/flutter-apk/app-release.apk "bowel-$VERSION-android-arm64.apk"
 
       - uses: actions/upload-artifact@v7
