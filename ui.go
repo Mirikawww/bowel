@@ -385,9 +385,6 @@ func (u *UI) titleBar(c *ui.Context, p *pal) {
 							col = p.onAccent
 						}
 						ui.Text(c, i18n.T(pg.zh, pg.en)).FontSize(13).FontWeight(600).TextColor(col)
-						if id == "providers" && u.providerWarn() {
-							ui.Box(c).Size(5, 5).Radius(p.r(3)).Background(p.warn)
-						}
 					})
 				})
 			}
@@ -429,15 +426,6 @@ func (u *UI) statePill(c *ui.Context, p *pal) {
 		ui.Box(c).Size(7, 7).Radius(p.r(4)).Background(u.stateColor(p)).Transition(ui.ElementTransition{Colors: true})
 		ui.Text(c, stateName(u.snap.State)).FontSize(12).FontWeight(600).TextColor(p.ink2)
 	})
-}
-
-func (u *UI) providerWarn() bool {
-	for _, pv := range u.snap.Providers {
-		if pv.Warn != "" || pv.Error != "" {
-			return true
-		}
-	}
-	return false
 }
 
 // notice is what needs attention, in the title bar after the tabs: only
